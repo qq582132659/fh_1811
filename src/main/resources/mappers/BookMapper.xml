@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fh.shop.api.book.mapper.IBookMapper" >
+
+
+<!--新增-->
+    <insert id="addBook" parameterType="com.fh.shop.api.book.po.Book">
+        insert into t_book(bookName, price) values(#{bookName},#{price})
+    </insert>
+
+    <!--删除-->
+    <delete id="deleteBook" parameterType="java.lang.Long">
+        delete from t_book where id =#{value}
+    </delete>
+
+    <!--批量删除-->
+    <delete id="deleteBooks">
+        delete from t_book where id in
+        <foreach collection="list" open="(" item="id" close=")" separator=",">
+              #{id}
+      </foreach>
+    </delete>
+
+    <!--回显-->
+    <select id="toUpdateBookId" parameterType="java.lang.Long" resultType="com.fh.shop.api.book.po.Book">
+        select id,bookName,price from t_book where id = #{id}
+    </select>
+
+    <!--修改-->
+    <update id="updateBook" parameterType="com.fh.shop.api.book.po.Book">
+        update t_book set bookName = #{bookName}, price = #{price} where id = #{id}
+    </update>
+
+    <!--条件-->
+    <sql id="bookWhere">
+        <where>
+            <if test="bookName != null and bookName != ''">
+                bookName like concat('%', #{bookName}, '%')
+            </if>
+            <if test="minPrice > 0">
+                and price >= #{minPrice}
+            </if>
+            <if test="maxPrice > 0">
+                and price &lt;= #{maxPrice}
+            </if>
+        </where>
+    </sql>
+
+    <!--查询总条数-->
+    <select id="findCount" parameterType="com.fh.shop.api.book.vo.BookVo" resultType="java.lang.Integer">
+            select count(id) from t_book <include refid="bookWhere"/>
+    </select>
+
+    <!--查询数据-->
+    <select id="findList" parameterType="com.fh.shop.api.book.vo.BookVo" resultType="com.fh.shop.api.book.po.Book">
+        select t.* from
+        (select id,bookName,price from t_book
+        <include refid="bookWhere"/>
+        order by id desc)t
+        limit #{start},#{length}
+    </select>
+</mapper>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fh.shop.api.memberuser.mapper.IMemberUserMapper" >
+
+
+	<!-- 会员注册 -->
+	<insert id="addMenberUser">
+		insert into t_memberuser(userName,trueName,userPwd,birthday,phoneNum,email,province,city,county)
+		values(#{userName},#{trueName},#{userPwd},#{birthday},#{phoneNum},#{email},#{province},#{city},#{county})
+	</insert>
+	<!-- 登陆验证 -->
+	<select id="getUser" resultType="com.fh.shop.api.memberuser.po.MemberUser" parameterType="string">
+		select id,userName,trueName,userPwd,birthday,phoneNum,email
+		from t_memberuser where userName = #{userName}
+	</select>
+	<!-- 查询用户名唯一 -->
+	<select id="queryUserName" parameterType="string" resultType="com.fh.shop.api.memberuser.po.MemberUser">
+		select id,userName,trueName,userPwd,birthday,phoneNum,email
+		from t_memberuser where userName = #{userName}
+	</select>
+</mapper>
